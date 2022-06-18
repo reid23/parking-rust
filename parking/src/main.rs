@@ -6,5 +6,6 @@ use rand::distributions::{Normal, Distribution};
 
 //use Student;
 
-fn main(){}
-
+fn main() {
+    println!("Hello, world!");
+}
