@@ -4,5 +4,7 @@ use std::error::Error;
 use serde_json::{Value, Map};
 use rand::distributions::{Normal, Distribution};
 
-use Student::*
+//use Student;
+
+fn main(){}
 
