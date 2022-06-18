@@ -1,7 +1,8 @@
 use Student;
 
 pub struct Sorter{
-    mut students: Vec<Vec<Student>>
+    mut students: Vec<Vec<Student>>,
+    student_names: Vec<String>
 }
 
 impl Sorter{
@@ -10,8 +11,13 @@ impl Sorter{
     const MAX_PAR: usize = 4;
     
     pub fn new(all_students: Vec<Vec<Student>>) -> Sorter{
+        let names: Vec<String> = Vec::new();
+        for s in students{names.push(s.get_name())}
+        names.sort();
+
         s = Sorter {
             students: students //should be [monday[student, student, ...], tuesday[student, student, student]]
+            student_names: names
         }
         s.sort_days()
         
@@ -24,11 +30,14 @@ impl Sorter{
         }
     }
 
-    fn index(&self, day: usize, student: Student) -> usize{
-        for student in self.students[day]{
-            match student{
-                
+    fn index(&self, student: Student|String) -> usize{
+        //! SLOW! but I don't have wifi to search up the builtin version ;-;
+        let mut idx: usize = 0;
+        for name in self.student_names{
+            if (student == name || student.get_name() == name){
+                return idx;
             }
+            idx++;
         }
     }
 
@@ -46,15 +55,33 @@ impl Sorter{
         //[zTue    zTue    zTue    zTue    ....    zTue]
 
         let mut results: Vec<Vec<String>> = Vec::new();
+        let mut day_num: usize = 0;
+        let mut par_tot: usize = 0;
+        let mut sml_tot: usize = 0;
+        let mut reg_tot: usize = 0;
 
         for day in self.students{
             let mut this_day_results: Vec<String> = vec![String::new(); day.len()];
             for student in day{
-                if student.can_parallel_park(){
-                    results.
+                let student_idx = self.index(student)
+                if (student.can_parallel_park() && par_tot < Sorter::MAX_PAR){
+                    results[student_idx] = String::from("PAR");
+                    par_tot++;
+                }
+                else if (student.has_small_car() && sml_tot < Sorter::MAX_SML){
+                    results[student_idx] = String::from("SML");
+                    sml_tot++;
+                }
+                else if (reg_tot < Sorter::MAX_REG){
+                    results[student_idx] = String::from("REG");
+                    reg_tot++;
+                }
+                else{
+                    results[student_idx] = String::from("BART");
                 }
             }
             results.push(this_day_results);
+            day_num++;
         }
 
         //then transpose and return
