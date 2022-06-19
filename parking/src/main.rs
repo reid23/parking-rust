@@ -171,22 +171,20 @@ impl Sorter{
 
         //transpose and return!
         let mut output: Vec<Vec<String>> = Vec::new();
-        for s in 0..self.students[0].len()-1{
+        for s in 0..self.students[0].len(){
             let mut col: Vec<String> = Vec::new();
             for row in 0..5{ //there are 6 rows: name + 5 days
                 col.push(results[row][s].clone());
             }
             output.push(col);//now col is a row, so transposed
         }
-        println!("{:?}", results);
-        println!("{:?}", output);
         output
 
     }
 }
 
 fn main() {
-    println!("Hello, world!");
+    
     let s = Sorter::new(vec![
         vec![Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
         vec![Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
