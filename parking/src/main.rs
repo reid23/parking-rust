@@ -1,10 +1,16 @@
-use std::collections::HashMap;
-use std::fs;
-use std::error::Error;
-use serde_json::{Value, Map};
-use rand::distributions::{Normal, Distribution};
+mod Student;
+mod Sorter;
 
-//use Student;
+fn main() {
 
-fn main(){}
+    let s = Sorter::Sorter::new(vec![
+        vec![Student::Student::new("bob", &vec![1,94303,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
+        vec![Student::Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
+        vec![Student::Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
+        vec![Student::Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
+        vec![Student::Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
+    ]);
 
+    println!("{:?}", s.get_assignments());
+
+}
