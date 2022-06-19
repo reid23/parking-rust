@@ -6,7 +6,7 @@ use rand_distr::{Normal, Distribution};
 
 pub struct Student{
     name: String,
-    row: Vec<u8>,
+    row: Vec<usize>,
     dists: Map<String, Value>
 }
 
@@ -18,7 +18,7 @@ impl Student{
         Ok(obj)
     }
 
-    pub fn new(student_name: &str, row: &Vec<u8>) -> Student{
+    pub fn new(student_name: &str, row: &Vec<usize>) -> Student{
         Student {
             name: String::from(student_name),
             row: row.clone(),
@@ -27,13 +27,13 @@ impl Student{
     }
 
     pub fn generate_score(&self, day: usize) -> f32{
-        let crit: u8 = self.row[2..7][day];
-        let sports: u8 = self.row[7..12][day];
+        let crit = self.row[2..7][day];
+        let sports = self.row[7..12][day];
         let fp_free = self.row[14];
         let lp_free = self.row[15];
         let dist: f32 = self.dists.get(&self.row[1].to_string()).unwrap().as_f64().unwrap() as f32;
-        let carpool_seniors: u8 = self.row[12];
-        let carpool_youngns: u8 = self.row[13];
+        let carpool_seniors = self.row[12];
+        let carpool_youngns = self.row[13];
         let strikes = self.row[17];
         let weights: Vec<f32> = vec![16.0, 8.0, 10.0, 40.0, -20.0];
         let mut score: f32 = weights.iter().zip(vec![fp_free, lp_free, crit, sports, strikes].iter()).map(|(x, y)| x * (*y as f32)).sum();
@@ -184,9 +184,9 @@ impl Sorter{
 }
 
 fn main() {
-    
+
     let s = Sorter::new(vec![
-        vec![Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
+        vec![Student::new("bob", &vec![1,94303,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
         vec![Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
         vec![Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
         vec![Student::new("bob", &vec![1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])],
