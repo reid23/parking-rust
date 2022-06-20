@@ -1,10 +1,13 @@
 #![allow(non_snake_case)]
 mod Student;
 mod Sorter;
+mod Data;
+
 use std::{env, fs};
 use serde_json::{Value, Map};
 use std::error::Error;
 use std::env::current_exe;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len()!=1{
