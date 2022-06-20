@@ -28,7 +28,7 @@ impl Student{
         let strikes = self.row[17];
         let weights: Vec<f32> = vec![16.0, 8.0, 10.0, 40.0, -20.0];
 
-        let mut score: f32 = weights.iter().zip(vec![fp_free, lp_free, crit, sports, strikes].iter()).map(|(x, y)| x * (*y as f32)).sum();
+        let mut score: f32 = weights.iter().zip(vec![fp_free, lp_free, sports, crit, strikes].iter()).map(|(x, y)| x * (*y as f32)).sum();
         score *= 1.0 + carpool_seniors as f32 + (carpool_youngns as f32 * 0.25);
         
         let normal = Normal::new(0.0 as f32, 5.0 as f32).unwrap();

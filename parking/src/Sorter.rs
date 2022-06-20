@@ -1,10 +1,14 @@
 use std::collections::VecDeque;
+use std::fs;
 
 use crate::Student;
 
 pub struct Sorter{
     pub students: Vec<Vec<Student::Student>>,
-    pub student_names: Vec<String>
+    pub student_names: Vec<String>,
+    MAX_REG: usize,
+    MAX_SML: usize,
+    MAX_PAR: usize,
 }
 
 impl Sorter{
@@ -12,6 +16,11 @@ impl Sorter{
     const MAX_SML: usize = 8;
     const MAX_PAR: usize = 4;
     
+    pub fn set_maxes(&self, reg: usize, sml: usize, par: usize){
+        self.MAX_REG = if reg < 0 {self.MAX_REG} else {reg};
+        self.MAX_SML = if sml < 0 {self.MAX_SML} else {sml};
+        self.MAX_PAR = if par < 0 {self.MAX_PAR} else {par};
+    }
     pub fn new(all_students: Vec<Vec<Student::Student>>) -> Sorter{
         let mut names: Vec<String> = Vec::new();
         for s in &all_students[0]{names.push(s.get_name())}
@@ -19,7 +28,7 @@ impl Sorter{
 
         let mut s = Sorter {
             students: all_students, //should be [monday[student, student, ...], tuesday[student, student, student]]
-            student_names: names
+            student_names: names,
         };
         s.sort_days();
         
