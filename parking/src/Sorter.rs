@@ -57,15 +57,15 @@ impl Sorter{
         //[stu1    stu2    stu3    stu4    ....    stuN]
         //[zMon    zMon    zMon    zMon    ....    zMon]
         //[zTue    zTue    zTue    zTue    ....    zTue]
-
+        
         let mut results: Vec<Vec<String>> = Vec::new();
-        let mut par_tot: usize = 0;
-        let mut sml_tot: usize = 0;
-        let mut reg_tot: usize = 0;
-        let mut double_ability_students = VecDeque::new();
-
+        
         for day in &self.students{
             let mut this_day_results: Vec<String> = vec![String::new(); day.len()];
+            let mut double_ability_students = VecDeque::new();
+            let mut par_tot: usize = 0;
+            let mut sml_tot: usize = 0;
+            let mut reg_tot: usize = 0;
             for student in day{
                 let student_idx = self.index(student.get_name()).unwrap();
                 
@@ -84,6 +84,7 @@ impl Sorter{
                     this_day_results[self.index(double_ability_students.pop_front().unwrap().get_name()).unwrap()] = String::from("SML");
                     this_day_results[student_idx] = String::from("PAR");
                     sml_tot += 1;
+
                 }
                 //ok that should be taken care of now, we can sort normally
 
@@ -94,27 +95,25 @@ impl Sorter{
                 else if student.has_small_car() && sml_tot < Sorter::MAX_SML{
                     this_day_results[student_idx] = String::from("SML");
                     sml_tot += 1;
+
                 }
                 else if reg_tot < Sorter::MAX_REG{
                     this_day_results[student_idx] = String::from("REG");
                     reg_tot += 1;
+
                 }
                 else{
                     this_day_results[student_idx] = String::from("BART");
+
                 }
             }
 
             results.push(this_day_results);
-            par_tot = 0;
-            sml_tot = 0;
-            reg_tot = 0;
-            double_ability_students = VecDeque::new();
         }
-
         //transpose and return!
         let mut output: Vec<Vec<String>> = Vec::new();
         for s in 0..self.students[0].len(){
-            let mut col: Vec<String> = Vec::new();
+            let mut col: Vec<String> = vec![self.student_names[s].clone()];
             for row in 0..5{ //there are 6 rows: name + 5 days
                 col.push(results[row][s].clone());
             }
