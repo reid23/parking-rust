@@ -3,7 +3,7 @@ parking_service_account.json
 service_account.json
 
 target/
-Cargo.lock
+parking/Cargo.lock
 
 parking-env/
 gspread/
@@ -140,3 +140,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+parking/Cargo.lock
