@@ -1,5 +1,8 @@
+#![allow(non_snake_case)]
 use std::collections::VecDeque;
 use std::fs;
+use std::io::Error;
+use serde_json::{Value, Map};
 
 use crate::Student;
 
@@ -12,27 +15,28 @@ pub struct Sorter{
 }
 
 impl Sorter{
-    const MAX_REG: usize = 41;
-    const MAX_SML: usize = 8;
-    const MAX_PAR: usize = 4;
-    
-    pub fn set_maxes(&self, reg: usize, sml: usize, par: usize){
-        self.MAX_REG = if reg < 0 {self.MAX_REG} else {reg};
-        self.MAX_SML = if sml < 0 {self.MAX_SML} else {sml};
-        self.MAX_PAR = if par < 0 {self.MAX_PAR} else {par};
-    }
-    pub fn new(all_students: Vec<Vec<Student::Student>>) -> Sorter{
+    pub fn new(student_data: Vec<Vec<Student::Student>>, config_path: &str) -> Result<Sorter, Error>{
         let mut names: Vec<String> = Vec::new();
-        for s in &all_students[0]{names.push(s.get_name())}
+        for s in &student_data[0]{names.push(s.get_name())}
         names.sort();
 
+        let config = fs::read_to_string(config_path)?;
+        let parsed: Value = serde_json::from_str(&config)?;
+        let cfg: Map<String, Value> = parsed.as_object().unwrap().clone();
+
+
+
         let mut s = Sorter {
-            students: all_students, //should be [monday[student, student, ...], tuesday[student, student, student]]
+            students: student_data, //should be [monday[student, student, ...], tuesday[student, student, student]]
             student_names: names,
+            MAX_REG: cfg["MAX_REG"].to_string().parse::<usize>().unwrap(),
+            MAX_SML: cfg["MAX_SML"].to_string().parse::<usize>().unwrap(),
+            MAX_PAR: cfg["MAX_PAR"].to_string().parse::<usize>().unwrap(),
+
         };
         s.sort_days();
         
-        s
+        Ok(s)
     }
 
     fn sort_days(&mut self){
@@ -86,9 +90,9 @@ impl Sorter{
                     double_ability_students.push_back(student);
                 }
                 if {student.can_parallel_park()&& //if the student can parallel park
-                    reg_tot >= Sorter::MAX_REG && //but reg
-                    par_tot >= Sorter::MAX_PAR && //and par are full
-                    sml_tot <  Sorter::MAX_SML && // and sml isn't
+                    reg_tot >= self.MAX_REG && //but reg
+                    par_tot >= self.MAX_PAR && //and par are full
+                    sml_tot <  self.MAX_SML && // and sml isn't
                     double_ability_students.len() != 0}{ //and there's someone who could be moved from par to sml to allow this person to park
                     this_day_results[self.index(double_ability_students.pop_front().unwrap().get_name()).unwrap()] = String::from("SML");
                     this_day_results[student_idx] = String::from("PAR");
@@ -97,16 +101,16 @@ impl Sorter{
                 }
                 //ok that should be taken care of now, we can sort normally
 
-                else if student.can_parallel_park() && par_tot < Sorter::MAX_PAR{
+                else if student.can_parallel_park() && par_tot < self.MAX_PAR{
                     this_day_results[student_idx] = String::from("PAR");
                     par_tot += 1;
                 }
-                else if student.has_small_car() && sml_tot < Sorter::MAX_SML{
+                else if student.has_small_car() && sml_tot < self.MAX_SML{
                     this_day_results[student_idx] = String::from("SML");
                     sml_tot += 1;
 
                 }
-                else if reg_tot < Sorter::MAX_REG{
+                else if reg_tot < self.MAX_REG{
                     this_day_results[student_idx] = String::from("REG");
                     reg_tot += 1;
 

@@ -1,20 +1,30 @@
-use std::error::Error;
+#![allow(non_snake_case)]
+use std::io::Error;
 use serde_json::{Value, Map};
 use rand_distr::{Normal, Distribution};
+use std::fs;
 
 pub struct Student{
     pub name: String,
     pub row: Vec<usize>,
-    pub dists: Map<String, Value>
+    pub dists: Map<String, Value>,
+    weights: Map<String, Value>,
 }
 
 impl Student{
-    pub fn new(student_name: &str, row: &Vec<usize>) -> Student{
-        Student {
-            name: String::from(student_name),
-            row: row.clone(),
-            dists: Student::load_dists().unwrap()
-        }
+    pub fn new(student_name: &str, row: &Vec<usize>, config_path: &str) -> Result<Student, Error>{
+        let config = fs::read_to_string(config_path)?;
+        let parsed: Value = serde_json::from_str(&config)?;
+        let weights_map: Map<String, Value> = serde_json::from_str(&parsed.as_object().unwrap().clone()["Weights"].to_string()).unwrap();
+
+        Ok(
+            Student {
+                name: String::from(student_name),
+                row: row.clone(),
+                dists: Student::load_dists().unwrap(),
+                weights: weights_map,
+            }
+        )
     }
 
     pub fn generate_score(&self, day: usize) -> f32{
@@ -26,10 +36,21 @@ impl Student{
         let carpool_seniors = self.row[12];
         let carpool_youngns = self.row[13];
         let strikes = self.row[17];
-        let weights: Vec<f32> = vec![16.0, 8.0, 10.0, 40.0, -20.0];
+        
+
+        let weights: Vec<f32> = vec![
+            self.weights["Last Period Free"].to_string().parse::<f32>().unwrap(),
+            self.weights["First Period Free"].to_string().parse::<f32>().unwrap(),
+            self.weights["Sports Away Game"].to_string().parse::<f32>().unwrap(),
+            self.weights["Critical Need"].to_string().parse::<f32>().unwrap(),
+            self.weights["Strikes"].to_string().parse::<f32>().unwrap(),
+        ];
+        
+        let senior_carpool_weight = self.weights["Carpool Multiplier Weight (Senior)"].to_string().parse::<f32>().unwrap();
+        let youngn_carpool_weight = self.weights["Carpool Multiplier Weight (Non-Senior)"].to_string().parse::<f32>().unwrap();
 
         let mut score: f32 = weights.iter().zip(vec![fp_free, lp_free, sports, crit, strikes].iter()).map(|(x, y)| x * (*y as f32)).sum();
-        score *= 1.0 + carpool_seniors as f32 + (carpool_youngns as f32 * 0.25);
+        score *= 1.0 + (carpool_seniors as f32 * senior_carpool_weight) + (carpool_youngns as f32 * youngn_carpool_weight);
         
         let normal = Normal::new(0.0 as f32, 5.0 as f32).unwrap();
         score += normal.sample(&mut rand::thread_rng());
@@ -49,7 +70,7 @@ impl Student{
     }
 
     // collapse the big line! lots of stuff, scaaaary
-    fn load_dists() -> Result<Map<String, Value>, Box<dyn Error>> {
+    fn load_dists() -> Result<Map<String, Value>, Error> {
         //let config = fs::read_to_string(path)?;
         let dist_string = String::from("{\"90001\": 484.2921552515586,
         \"90002\": 486.23844230443797,

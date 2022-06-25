@@ -9,6 +9,7 @@
         "Sports Away Game": 20,
         "Critical Need": 40,
         "Distance From School": 0.9,
+        "Strikes": -20,
         "Carpool Multiplier Weight (Senior)": 1,
         "Carpool Multiplier Weight (Non-Senior)": 0.25,
         "Random Factor stdev": 5

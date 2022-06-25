@@ -1,0 +1,15 @@
+{
+  "name": "",
+  "isOrdered": true,
+  "folders": {
+    "parking": {
+      "name": "parking",
+      "isOrdered": true,
+      "folders": {},
+      "files": {}
+    }
+  },
+  "files": {
+    "README": 0
+  }
+}
