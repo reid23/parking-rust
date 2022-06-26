@@ -17,6 +17,7 @@ fn main() {
 
     }
     test();
+    Data::test();
 }
 fn test(){
     let path_buffer = current_exe().unwrap();
