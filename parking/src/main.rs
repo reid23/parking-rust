@@ -1,28 +1,46 @@
 #![allow(non_snake_case)]
 mod Student;
 mod Sorter;
+use std::collections::btree_set::Intersection;
+use std::ops::Index;
 use std::{env, fs};
 use serde_json::{Value, Map};
-use std::error::Error;
+use std::io::Error;
 use std::env::current_exe;
+
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    const VERSION: &str = "0.0.1";
+    let mut args: Vec<String> = env::args().collect();
     if args.len()!=1{
-        if args[1].contains("-h"){
-            main_help();
-            return;
-        }
         if args[1] == "config" {
-            if args[2].contains("-h"){
+            if args.contains(&"-h".to_string()) || args.contains(&"--help".to_string()){
                 config_help();
                 return;
             }
+            if args.contains(&"-s".to_string()) || args.contains(&"--show".to_string()){
+                
+            }
         }
         if args[1] == "assign" {
-            if args[2].contains("-h"){
+            if args.contains(&"-h".to_string()) || args.contains(&"--help".to_string()){
                 assign_help();
                 return;
             }
+            if args.contains(&"-t".to_string()) || args.contains(&"--time".to_string()){
+                let time = args.pop().unwrap();
+                println!("assignment scheduled for {}", time);
+                //todo: wait the time
+            }
+            run_sort();
+            return;
+        }
+        if args.contains(&"-h".to_string()) || args.contains(&"--help".to_string()){
+            main_help();
+            return;
+        }
+        if args.contains(&"-v".to_string()) || args.contains(&"--version".to_string()){
+            println!("Parking v{}", VERSION);
+            return;
         }
     }
     else{
@@ -30,6 +48,9 @@ fn main() {
     }
     test();
 }
+
+fn run_sort(){} //TODO: fill this out
+
 fn assign_help(){
     println!("usage: parking assign [-h] [-t TIME]\n");
     println!("run the algorithm and assign parking for the week.\n");
@@ -98,7 +119,7 @@ fn test(){
 
 }
 
-fn read_config(path: &str) -> Result<Map<String, Value>, Box<dyn Error>> {
+fn read_config(path: &str) -> Result<Map<String, Value>, Error> {
     let config = fs::read_to_string(path)?;
     let parsed: Value = serde_json::from_str(&config)?;
     let obj: Map<String, Value> = parsed.as_object().unwrap().clone();
