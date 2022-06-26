@@ -5,9 +5,10 @@ use google_sheets4 as sheets4;
 use sheets4::api::ValueRange;
 use sheets4::{Result, Error};
 use sheets4::{Sheets, oauth2};
- 
+
+
 pub async fn test(){
-    let str_vec_thing: Vec<String> = Vec::new();
+    let str_vec_thing = vec![String::from("http://127.0.0.1:56111")];//http://127.0.0.1:57383
 
     // Get an ApplicationSecret instance by some means. It contains the `client_id` and 
     // `client_secret`, among other things.
@@ -69,7 +70,7 @@ pub async fn test(){
             |Error::Failure(_)
             |Error::BadRequest(_)
             |Error::FieldClash(_)
-            |Error::JsonDecodeError(_, _) => println!("{}", e),
+            |Error::JsonDecodeError(_, _) => println!("error: {}", e),
         },
         Ok(res) => println!("Success: {:?}", res),
     }

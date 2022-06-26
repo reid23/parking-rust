@@ -7,8 +7,12 @@ use std::{env, fs};
 use serde_json::{Value, Map};
 use std::error::Error;
 use std::env::current_exe;
+use futures::executor::block_on;
+use tokio;
 
-fn main() {
+
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len()!=1{
         //do stuff with setting and getting things
@@ -17,7 +21,7 @@ fn main() {
 
     }
     test();
-    Data::test();
+    Data::test().await;
 }
 fn test(){
     let path_buffer = current_exe().unwrap();
