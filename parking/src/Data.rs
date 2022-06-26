@@ -4,7 +4,6 @@ use hyper_rustls::HttpsConnectorBuilder;
 use google_sheets4 as sheets4;
 use sheets4::api::ValueRange;
 use sheets4::{Result, Error};
-use std::default::Default;
 use sheets4::{Sheets, oauth2};
  
 pub async fn test(){
